@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 80" width="280" height="80" fill="none">
+  <g transform="translate(10, 8)">
+    <!-- Red Diamond Shield -->
+    <path d="M 30 2 L 58 24 L 30 58 L 2 24 Z" fill="#D7000F"/>
+    <!-- Stylized Lion Face Crest inside Diamond -->
+    <path d="M 30 12 L 36 20 L 44 20 L 38 26 L 42 34 L 30 28 L 18 34 L 22 26 L 16 20 L 24 20 Z" fill="#FFFFFF"/>
+    <circle cx="26" cy="24" r="1.5" fill="#D7000F"/>
+    <circle cx="34" cy="24" r="1.5" fill="#D7000F"/>
+    <path d="M 28 30 L 32 30 L 30 33 Z" fill="#D7000F"/>
+  </g>
+  <!-- TDAfrica Typography -->
+  <text x="80" y="38" font-family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="900" fill="#D7000F" letter-spacing="-0.5">TD<tspan fill="#1E293B" font-weight="800">Africa</tspan></text>
+  <text x="82" y="54" font-family="'Caveat', cursive, sans-serif" font-size="14" font-weight="700" fill="#64748B">...Empowering You</text>
+</svg>

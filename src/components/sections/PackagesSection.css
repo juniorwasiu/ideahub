@@ -1,0 +1,223 @@
+.packages-section {
+  background: radial-gradient(circle at 50% 30%, #152238 0%, #0B1325 70%, #070D1A 100%);
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .packages-grid {
+    grid-template-columns: 1fr 1.3fr 0.95fr;
+    gap: 2.5rem;
+  }
+}
+
+/* Animations */
+.package-col {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.packages-grid.is-revealed .package-col-left {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.packages-grid.is-revealed .package-col-center {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.15s;
+}
+
+.packages-grid.is-revealed .package-col-right {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+/* Left Column */
+.package-badge-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.package-red-line {
+  width: 24px;
+  height: 3px;
+  background-color: var(--color-brand-red);
+  border-radius: var(--radius-full);
+}
+
+.package-badge-text {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #CBD5E1;
+  text-transform: uppercase;
+}
+
+.package-main-heading {
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.package-size-heading {
+  font-size: clamp(1.85rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: #F1F5F9;
+}
+
+.package-checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.package-check-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.package-check-icon {
+  color: var(--color-brand-red);
+  flex-shrink: 0;
+}
+
+.package-check-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+/* Center Column */
+.package-visual-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.package-product-image {
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.6));
+  position: relative;
+  z-index: 1;
+  transition: transform var(--transition-smooth);
+}
+
+.package-visual-stage:hover .package-product-image {
+  transform: scale(1.03);
+}
+
+.package-stage-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  background: radial-gradient(circle, rgba(237, 27, 36, 0.12) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Right Column */
+.package-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+.package-terms-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.package-terms-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.package-terms-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Red Immediate Pickup Splash Badge */
+.immediate-pickup-badge {
+  display: inline-flex;
+  background: linear-gradient(135deg, #ED1B24 0%, #D7000F 100%);
+  color: #FFFFFF;
+  padding: 1.25rem 1.75rem;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(237, 27, 36, 0.45);
+  position: relative;
+  align-self: flex-start;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.immediate-pickup-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(237, 27, 36, 0.55);
+}
+
+.pickup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.pickup-line-1 {
+  font-size: 0.775rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.pickup-line-2 {
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+  line-height: 1.15;
+}
+
+.pickup-icon-wrap {
+  display: flex;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+
+.pickup-truck-svg {
+  color: #FFFFFF;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}

@@ -1,0 +1,111 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  user-select: none;
+  border: 2px solid transparent;
+}
+
+/* Sizing */
+.btn-sm {
+  font-size: 0.85rem;
+  padding: 0.5rem 1.15rem;
+  min-height: 40px;
+}
+
+.btn-md {
+  font-size: 0.975rem;
+  padding: 0.75rem 1.65rem;
+  min-height: 48px;
+}
+
+.btn-lg {
+  font-size: 1.075rem;
+  padding: 0.95rem 2.25rem;
+  min-height: 54px;
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+/* Variants */
+.btn-primary {
+  background-color: var(--color-brand-red);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(237, 27, 36, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-brand-red-dark);
+  box-shadow: var(--shadow-red-glow);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  color: var(--color-brand-red);
+  border-color: var(--color-brand-red);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-brand-red-subtle);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.btn-outline:hover {
+  border-color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn-dark {
+  background-color: var(--color-navy-dark);
+  color: #FFFFFF;
+}
+
+.btn-dark:hover {
+  background-color: var(--color-navy-accent);
+  transform: translateY(-2px);
+}
+
+/* Icons inside buttons */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15em;
+  transition: transform var(--transition-fast);
+}
+
+.btn:hover .btn-icon-right {
+  transform: translateX(4px);
+}
+
+.btn:hover .btn-icon-left {
+  transform: scale(1.1);
+}
