@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url>
+    <loc>https://huaweispot.xyz/</loc>
+    <lastmod>2026-10-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://huaweispot.xyz/assets/products/ideahub-b3.png</image:loc>
+      <image:title>Huawei IdeaHub B3 65-inch Interactive Display</image:title>
+      <image:caption>Next-generation 65-inch 4K smart interactive whiteboard with OPS i5 Windows module</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://huaweispot.xyz/assets/products/ideahub-package.png</image:loc>
+      <image:title>Huawei IdeaHub B3 Package with Accessories and OPS i5</image:title>
+      <image:caption>Huawei IdeaHub B3 package offer ₦3,800,000 in Nigeria</image:caption>
+    </image:image>
+    <video:video>
+      <video:thumbnail_loc>https://huaweispot.xyz/assets/products/ideahub-package.png</video:thumbnail_loc>
+      <video:title>Huawei IdeaHub B3 Product &amp; Accessories Showcase</video:title>
+      <video:description>Detailed look at the Huawei IdeaHub B3 65-inch interactive screen, accessories, and included OPS i5 module.</video:description>
+      <video:content_loc>https://huaweispot.xyz/assets/videos/product-accessories.mp4</video:content_loc>
+      <video:player_loc>https://huaweispot.xyz/#video-showcase</video:player_loc>
+      <video:duration>60</video:duration>
+      <video:publication_date>2026-10-03T08:00:00+01:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://huaweispot.xyz/assets/images/hero-workspace.jpg</video:thumbnail_loc>
+      <video:title>Huawei IdeaHub B3 Features in Action &amp; User Guide</video:title>
+      <video:description>Interactive demonstration of Huawei IdeaHub B3 4K whiteboard, wireless screen projection, and video conferencing.</video:description>
+      <video:content_loc>https://huaweispot.xyz/assets/videos/features-demo.mp4</video:content_loc>
+      <video:player_loc>https://huaweispot.xyz/#video-showcase</video:player_loc>
+      <video:duration>120</video:duration>
+      <video:publication_date>2026-10-03T08:00:00+01:00</video:publication_date>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
+  </url>
+</urlset>

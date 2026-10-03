@@ -173,6 +173,34 @@ export const CONTENT = {
     mainWhatsappLink: 'https://wa.me/2348036897081?text=Hello,%20I%20am%20interested%20in%20the%20Huawei%20IdeaHub%20B3%2065-inch%20package%20at%20₦3,800,000.',
   },
 
+  faq: {
+    badge: 'FREQUENTLY ASKED QUESTIONS',
+    heading: 'Everything You Need to Know',
+    description: 'Find answers to common questions about the Huawei IdeaHub B3 65-inch discount offer, delivery, and features.',
+    items: [
+      {
+        question: 'What is the special promotional price of Huawei IdeaHub B3 65-inch in Nigeria?',
+        answer: 'The Huawei IdeaHub B3 65-inch is currently available at a promotional discount price of ₦3,800,000 (discounted from ₦4,500,000) for a limited time. It includes the complete system, accessories, and the OPS i5 Windows computing module.',
+      },
+      {
+        question: 'What items are included in the ₦3,800,000 package?',
+        answer: 'The package contains the Huawei IdeaHub B3 65-inch 4K screen, integrated OPS i5 Windows computing module, smart writing styluses, wall mount brackets, power cables, and original accessories. (Note: Mobile rolling stand is sold separately).',
+      },
+      {
+        question: 'Does the IdeaHub B3 feature integrated camera and audio for video calls?',
+        answer: 'Yes. It comes equipped with a built-in 4K professional camera with AI Auto-Framing and acoustic baffling, an 8-meter microphone array with AI noise reduction, and stereo speakers, fully compatible with Zoom, Microsoft Teams, and Google Meet.',
+      },
+      {
+        question: 'How does wireless projection / screen sharing work?',
+        answer: 'You can wirelessly project your screen in 4K resolution from laptops (Windows/Mac), tablets, and smartphones (Android/iOS) with ultra-low 16ms latency without any cables.',
+      },
+      {
+        question: 'How do I place an order or arrange for delivery?',
+        answer: 'You can contact our sales representatives directly via WhatsApp or Phone: Bashir (08036897081) or Jaey (09026668082). We offer immediate pickup and fast nationwide delivery across Nigeria.',
+      },
+    ],
+  },
+
   trustIndicators: [
     { title: 'Trusted Brand', icon: 'ShieldCheck' },
     { title: 'Professional Support', icon: 'Headset' },
@@ -185,6 +213,7 @@ export const CONTENT = {
     { name: 'Features', href: '#features' },
     { name: 'Packages', href: '#packages' },
     { name: 'Why Huawei', href: '#why-huawei' },
+    { name: 'FAQ', href: '#faq' },
     { name: 'Contact', href: '#contact' },
   ],
 };
