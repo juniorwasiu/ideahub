@@ -246,13 +246,83 @@
 /* WhatsApp Button */
 .contact-whatsapp-wrap {
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .contact-whatsapp-btn {
   font-size: 1.1rem !important;
   font-weight: 800 !important;
   letter-spacing: 0.2px;
+}
+
+/* TikTok Channel Pill */
+.contact-tiktok-wrap {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.contact-tiktok-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-full);
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.contact-tiktok-pill:hover {
+  background: #000000;
+  border-color: rgba(254, 44, 85, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 16px rgba(254, 44, 85, 0.35);
+}
+
+.contact-tiktok-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.contact-tiktok-pill:hover .contact-tiktok-icon-box {
+  transform: rotate(-10deg) scale(1.1);
+  background: rgba(254, 44, 85, 0.25);
+}
+
+.contact-tiktok-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.contact-tiktok-action {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.contact-tiktok-handle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
 }
 
 /* Script Tagline */

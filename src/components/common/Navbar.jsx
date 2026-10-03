@@ -3,6 +3,7 @@ import { Menu, X } from 'lucide-react';
 import { ASSETS } from '../../constants/assets';
 import { CONTENT } from '../../constants/content';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
+import { TikTokIcon } from './TikTokIcon';
 import './Navbar.css';
 
 export function Navbar() {
@@ -82,8 +83,22 @@ export function Navbar() {
           </ul>
         </nav>
 
-        {/* Right Branding: TDAfrica */}
+        {/* Right Branding: TDAfrica & TikTok */}
         <div className="navbar-right-group">
+          {CONTENT.social?.tiktok && (
+            <a
+              href={CONTENT.social.tiktok.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="navbar-tiktok-link"
+              aria-label="Follow Huawei Spot on TikTok"
+              title="Follow @huaweispot on TikTok"
+            >
+              <TikTokIcon size={18} />
+              <span className="navbar-tiktok-text">TikTok</span>
+            </a>
+          )}
+
           <div className="navbar-partner-logo-box" title="Authorized Distributor">
             <img
               src={ASSETS.tdafricaLogo}
@@ -154,6 +169,20 @@ export function Navbar() {
           </nav>
 
           <div className="mobile-nav-footer">
+            {CONTENT.social?.tiktok && (
+              <a
+                href={CONTENT.social.tiktok.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mobile-tiktok-btn"
+                onClick={handleLinkClick}
+                aria-label="Watch on TikTok @huaweispot"
+              >
+                <TikTokIcon size={20} />
+                <span>Follow @huaweispot on TikTok</span>
+              </a>
+            )}
+
             <div className="mobile-partner-block">
               <span className="mobile-partner-label">Authorized Distributor</span>
               <img

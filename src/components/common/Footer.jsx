@@ -2,6 +2,7 @@ import React from 'react';
 import { ShieldCheck, Headset, Award, Truck } from 'lucide-react';
 import { ASSETS } from '../../constants/assets';
 import { CONTENT } from '../../constants/content';
+import { TikTokIcon } from './TikTokIcon';
 import './Footer.css';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -77,7 +78,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Middle Row: Navigation Links */}
+        {/* Middle Row: Navigation Links & TikTok Social */}
         <div className="footer-nav-row">
           <ul className="footer-nav-list">
             {CONTENT.navLinks.map((link) => (
@@ -88,6 +89,25 @@ export function Footer() {
               </li>
             ))}
           </ul>
+
+          {/* Official TikTok Social Badge */}
+          {CONTENT.social?.tiktok && (
+            <a
+              href={CONTENT.social.tiktok.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-tiktok-badge"
+              aria-label="Follow Huawei Spot on TikTok @huaweispot"
+            >
+              <div className="footer-tiktok-icon-box">
+                <TikTokIcon size={18} />
+              </div>
+              <div className="footer-tiktok-label-wrap">
+                <span className="footer-tiktok-sub">Official TikTok</span>
+                <span className="footer-tiktok-handle">{CONTENT.social.tiktok.handle}</span>
+              </div>
+            </a>
+          )}
         </div>
 
         {/* Bottom Row: Copyright & Disclaimers */}

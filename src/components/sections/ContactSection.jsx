@@ -3,6 +3,7 @@ import { Phone, MessageCircle, Users, TrendingUp, Monitor, Cpu } from 'lucide-re
 import { ASSETS } from '../../constants/assets';
 import { CONTENT } from '../../constants/content';
 import { Button } from '../common/Button';
+import { TikTokIcon } from '../common/TikTokIcon';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import './ContactSection.css';
 
@@ -98,6 +99,27 @@ export function ContactSection() {
                   {CONTENT.contact.mainWhatsappText}
                 </Button>
               </div>
+
+              {/* TikTok Channel Button */}
+              {CONTENT.social?.tiktok && (
+                <div className="contact-tiktok-wrap">
+                  <a
+                    href={CONTENT.social.tiktok.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="contact-tiktok-pill"
+                    aria-label="Follow Huawei Spot on TikTok"
+                  >
+                    <div className="contact-tiktok-icon-box">
+                      <TikTokIcon size={20} />
+                    </div>
+                    <div className="contact-tiktok-text-group">
+                      <span className="contact-tiktok-action">Watch Live Demos on TikTok</span>
+                      <span className="contact-tiktok-handle">{CONTENT.social.tiktok.handle}</span>
+                    </div>
+                  </a>
+                </div>
+              )}
 
               {/* Script Partner Tagline */}
               <p className="contact-partner-tagline" aria-label="Your Smart Workspace Partner">

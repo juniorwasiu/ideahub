@@ -173,6 +173,15 @@ export const CONTENT = {
     mainWhatsappLink: 'https://wa.me/2348036897081?text=Hello,%20I%20am%20interested%20in%20the%20Huawei%20IdeaHub%20B3%2065-inch%20package%20at%20₦3,800,000.',
   },
 
+  social: {
+    tiktok: {
+      name: 'TikTok',
+      handle: '@huaweispot',
+      url: 'https://www.tiktok.com/@huaweispot?is_from_webapp=1&sender_device=pc',
+      label: 'Follow us on TikTok @huaweispot',
+    },
+  },
+
   faq: {
     badge: 'FREQUENTLY ASKED QUESTIONS',
     heading: 'Everything You Need to Know',
