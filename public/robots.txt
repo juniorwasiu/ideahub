@@ -33,4 +33,4 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-Sitemap: https://huaweispot.xyz/sitemap.xml
+Sitemap: https://huaweispot.xyz/sitemap_index.xml
