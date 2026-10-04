@@ -6,6 +6,19 @@ import { useState, useEffect, useCallback } from 'react';
 export function useRouter() {
   const [currentPath, setCurrentPath] = useState(() => {
     if (typeof window !== 'undefined') {
+      if (sessionStorage.redirect) {
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        try {
+          const url = new URL(redirect);
+          if (url.pathname && url.pathname !== '/') {
+            window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+            return url.pathname;
+          }
+        } catch {
+          // Ignore invalid URL
+        }
+      }
       return window.location.pathname || '/';
     }
     return '/';
