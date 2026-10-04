@@ -7,7 +7,7 @@ import './Footer.css';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-export function Footer({ onNavigateAnalytics }) {
+export function Footer() {
   const getTrustIcon = (iconName) => {
     switch (iconName) {
       case 'ShieldCheck':
@@ -88,20 +88,6 @@ export function Footer({ onNavigateAnalytics }) {
                 </a>
               </li>
             ))}
-            <li>
-              <a
-                href="/analytics/overview"
-                className="footer-nav-link footer-analytics-link"
-                onClick={(e) => {
-                  if (onNavigateAnalytics) {
-                    e.preventDefault();
-                    onNavigateAnalytics();
-                  }
-                }}
-              >
-                Analytics Overview
-              </a>
-            </li>
           </ul>
 
           {/* Official TikTok Social Badge */}
