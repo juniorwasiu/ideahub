@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Immutable Visitor Logs (Each visit creates an audit entry)
+    match /visitor_logs/{logId} {
+      // Allow any visitor to append a new visit log document with required telemetry fields
+      allow create: if request.resource.data.visitorId is string
+                    && request.resource.data.ip is string
+                    && request.resource.data.clientTimestamp is string
+                    && request.resource.data.deviceType is string;
+
+      // Allow reads only for authenticated admins (or change to true if testing in open preview)
+      allow read: if true;
+
+      // Disallow client-side tampering or deletion of logs
+      allow update, delete: if false;
+    }
+
+    // 2. Aggregate Visitor Profile (1 document per unique visitor ID)
+    match /visitors/{visitorId} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -1,4 +1,6 @@
 @import './styles/variables.css';
+@import './styles/visitorWidget.css';
+@import './styles/analytics.css';
 
 /* Modern CSS Reset & Core Styling */
 *, *::before, *::after {
