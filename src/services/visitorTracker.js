@@ -12,7 +12,7 @@ import {
   onSnapshot,
   getDocs
 } from './firebase';
-import { collectVisitorData } from '../utils/deviceInfo';
+import { collectVisitorData, sanitizeForFirestore } from '../utils/deviceInfo';
 
 // Throttle check to avoid duplicate recordings on rapid React re-renders
 let lastTrackedUrl = '';
@@ -46,37 +46,35 @@ export async function trackVisitor(extraData = {}) {
     // 2. If Firebase is configured and initialized, write to Firestore
     if (isFirebaseConfigured && db) {
       // 2a. Add an immutable visit log record to `visitor_logs`
-      const logPayload = {
+      const logPayload = sanitizeForFirestore({
         ...visitorData,
         createdAt: serverTimestamp(),
         recordedVia: 'web_sdk_v9'
-      };
+      });
 
       const logDocRef = await addDoc(collection(db, 'visitor_logs'), logPayload);
 
       // 2b. Upsert aggregate visitor profile in `visitors/{visitorId}`
       try {
         const visitorProfileRef = doc(db, 'visitors', visitorData.visitorId);
-        await setDoc(
-          visitorProfileRef,
-          {
-            visitorId: visitorData.visitorId,
-            lastSeen: serverTimestamp(),
-            lastSeenIso: visitorData.clientTimestamp,
-            lastIp: visitorData.ip,
-            lastCity: visitorData.city,
-            lastCountry: visitorData.country,
-            lastDevice: visitorData.deviceType,
-            lastBrowser: visitorData.browser,
-            lastOs: visitorData.os,
-            lastPathname: visitorData.pathname,
-            totalVisits: visitorData.visitCount,
-            firstVisitAt: visitorData.firstVisitAt,
-            screenResolution: visitorData.screenResolution,
-            language: visitorData.language
-          },
-          { merge: true }
-        );
+        const profilePayload = sanitizeForFirestore({
+          visitorId: visitorData.visitorId,
+          lastSeen: serverTimestamp(),
+          lastSeenIso: visitorData.clientTimestamp,
+          lastIp: visitorData.ip,
+          lastCity: visitorData.city,
+          lastCountry: visitorData.country,
+          lastDevice: visitorData.deviceType,
+          lastBrowser: visitorData.browser,
+          lastOs: visitorData.os,
+          lastPathname: visitorData.pathname,
+          totalVisits: visitorData.visitCount,
+          firstVisitAt: visitorData.firstVisitAt,
+          screenResolution: visitorData.screenResolution,
+          language: visitorData.language
+        });
+
+        await setDoc(visitorProfileRef, profilePayload, { merge: true });
       } catch (profileErr) {
         console.warn('[VisitorTracker] Profile aggregation note:', profileErr?.message);
       }

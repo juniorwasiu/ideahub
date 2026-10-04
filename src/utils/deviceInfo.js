@@ -15,25 +15,52 @@ export function generateUniqueId() {
 }
 
 /**
+ * Deeply sanitizes an object for Firestore to guarantee no 'undefined' values exist
+ * (Firestore throws fatal errors if any field is undefined)
+ */
+export function sanitizeForFirestore(val) {
+  if (val === undefined) {
+    return null;
+  }
+  if (val === null || typeof val !== 'object') {
+    return val;
+  }
+  if (Array.isArray(val)) {
+    return val.map((item) => sanitizeForFirestore(item));
+  }
+  // If it's a Firestore FieldValue token (like serverTimestamp), preserve it
+  if (val._methodName || (val.constructor && val.constructor.name === 'FieldValue')) {
+    return val;
+  }
+  const clean = {};
+  for (const [key, v] of Object.entries(val)) {
+    clean[key] = v === undefined ? null : sanitizeForFirestore(v);
+  }
+  return clean;
+}
+
+/**
  * Parses userAgent to extract Device Type, Operating System, and Browser details
  */
-export function parseUserAgent(ua = navigator.userAgent) {
+export function parseUserAgent(ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '')) {
   const uaLower = ua.toLowerCase();
 
   // 1. Device Type Detection
   let deviceType = 'Desktop';
   const isMobileUA = /mobile|android|touch|webos|iphone|ipod|blackberry|iemobile|opera mini/i.test(uaLower);
   const isTabletUA = /ipad|tablet|(android(?!.*mobile))|silk/i.test(uaLower) || 
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad Pro
+    (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad Pro
 
   if (isTabletUA) {
     deviceType = 'Tablet';
   } else if (isMobileUA) {
     deviceType = 'Mobile';
-  } else if (window.innerWidth <= 768 && navigator.maxTouchPoints > 0) {
-    deviceType = 'Mobile';
-  } else if (window.innerWidth <= 1024 && navigator.maxTouchPoints > 0) {
-    deviceType = 'Tablet';
+  } else if (typeof window !== 'undefined') {
+    if (window.innerWidth <= 768 && (navigator.maxTouchPoints || 0) > 0) {
+      deviceType = 'Mobile';
+    } else if (window.innerWidth <= 1024 && (navigator.maxTouchPoints || 0) > 0) {
+      deviceType = 'Tablet';
+    }
   }
 
   // 2. Browser Detection
@@ -77,7 +104,7 @@ export function parseUserAgent(ua = navigator.userAgent) {
   } else if (/android/i.test(ua)) {
     const ver = ua.match(/android\s([0-9.]+)/i);
     os = ver ? `Android ${ver[1]}` : 'Android';
-  } else if (/ipad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+  } else if (/ipad/i.test(ua) || (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
     os = 'iPadOS';
   } else if (/iphone/i.test(ua)) {
     const ver = ua.match(/os\s([0-9_]+)/i);
@@ -94,7 +121,7 @@ export function parseUserAgent(ua = navigator.userAgent) {
     deviceType,
     browser: browserVersion ? `${browser} (${browserVersion.split('.')[0]})` : browser,
     browserRaw: browser,
-    browserVersion,
+    browserVersion: browserVersion || null,
     os,
     rawUserAgent: ua
   };
@@ -155,97 +182,143 @@ export function getVisitorIdentity() {
 }
 
 /**
- * Fetches public IP address and geolocation with fast fallbacks & timeouts
+ * Fetches public IP address and geolocation with 100% open CORS endpoints & fallbacks
  */
 export async function fetchClientIP(timeoutMs = 3500) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  // Strategy 1: ipapi.co (Returns IP + City + Country + Region + Org)
+  // Strategy 1: ipwho.is (CORS Open '*', HTTPS, Free, rich Geolocation)
   try {
-    const res = await fetch('https://ipapi.co/json/', {
+    const res = await fetch('https://ipwho.is/', {
       signal: controller.signal
     });
     if (res.ok) {
       const data = await res.json();
-      clearTimeout(timeoutId);
-      return {
-        ip: data.ip || 'Unknown IP',
-        city: data.city || null,
-        region: data.region || null,
-        country: data.country_name || data.country || null,
-        countryCode: data.country_code || null,
-        postal: data.postal || null,
-        latitude: data.latitude || null,
-        longitude: data.longitude || null,
-        org: data.org || null,
-        asn: data.asn || null,
-        source: 'ipapi.co'
-      };
+      if (data && data.success !== false) {
+        clearTimeout(timeoutId);
+        return {
+          ip: data.ip || 'Unknown IP',
+          city: data.city || null,
+          region: data.region || null,
+          country: data.country || null,
+          countryCode: data.country_code || null,
+          postal: data.postal || null,
+          latitude: data.latitude || null,
+          longitude: data.longitude || null,
+          org: data.connection?.org || data.connection?.isp || null,
+          asn: data.connection?.asn ? String(data.connection.asn) : null,
+          source: 'ipwho.is'
+        };
+      }
     }
   } catch {
-    // Proceed to fallback
+    // Fall through to next strategy
   }
 
-  // Strategy 2: ipify.org (Reliable pure IP fallback)
+  // Strategy 2: freeipapi.com (CORS Open '*', HTTPS, Free)
+  try {
+    const res = await fetch('https://freeipapi.com/api/json', {
+      signal: controller.signal
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.ipAddress) {
+        clearTimeout(timeoutId);
+        return {
+          ip: data.ipAddress || 'Unknown IP',
+          city: data.cityName || null,
+          region: data.regionName || null,
+          country: data.countryName || null,
+          countryCode: data.countryCode || null,
+          postal: data.zipCode || null,
+          latitude: data.latitude || null,
+          longitude: data.longitude || null,
+          org: null,
+          asn: null,
+          source: 'freeipapi.com'
+        };
+      }
+    }
+  } catch {
+    // Fall through to next strategy
+  }
+
+  // Strategy 3: api64.ipify.org (CORS Open '*', pure IPv4/IPv6)
   try {
     const res = await fetch('https://api64.ipify.org?format=json', {
       signal: controller.signal
     });
     if (res.ok) {
       const data = await res.json();
-      clearTimeout(timeoutId);
-      return {
-        ip: data.ip || 'Unknown IP',
-        city: null,
-        region: null,
-        country: null,
-        countryCode: null,
-        org: null,
-        source: 'ipify.org'
-      };
+      if (data && data.ip) {
+        clearTimeout(timeoutId);
+        return {
+          ip: data.ip,
+          city: null,
+          region: null,
+          country: null,
+          countryCode: null,
+          postal: null,
+          latitude: null,
+          longitude: null,
+          org: null,
+          asn: null,
+          source: 'api64.ipify.org'
+        };
+      }
     }
   } catch {
-    // Proceed to fallback
+    // Fall through to next strategy
   }
 
-  // Strategy 3: api.ipify.org IPv4
+  // Strategy 4: api.ipify.org (CORS Open '*', pure IPv4)
   try {
     const res = await fetch('https://api.ipify.org?format=json', {
       signal: controller.signal
     });
     if (res.ok) {
       const data = await res.json();
-      clearTimeout(timeoutId);
-      return {
-        ip: data.ip || 'Unknown IP',
-        city: null,
-        region: null,
-        country: null,
-        countryCode: null,
-        org: null,
-        source: 'api.ipify.org'
-      };
+      if (data && data.ip) {
+        clearTimeout(timeoutId);
+        return {
+          ip: data.ip,
+          city: null,
+          region: null,
+          country: null,
+          countryCode: null,
+          postal: null,
+          latitude: null,
+          longitude: null,
+          org: null,
+          asn: null,
+          source: 'api.ipify.org'
+        };
+      }
     }
   } catch {
-    // Both failed or timed out
+    // Failed all lookups
   } finally {
     clearTimeout(timeoutId);
   }
 
   return {
-    ip: 'Unknown (Client-side lookup restricted or offline)',
+    ip: 'Unknown IP',
     city: null,
     region: null,
     country: null,
     countryCode: null,
+    postal: null,
+    latitude: null,
+    longitude: null,
     org: null,
+    asn: null,
     source: 'none'
   };
 }
 
 /**
- * Gathers complete visitor telemetry payload
+ * Gathers complete visitor telemetry payload (with 100% non-undefined guaranteed values)
  */
 export async function collectVisitorData(extraData = {}) {
   const identity = getVisitorIdentity();
@@ -253,25 +326,28 @@ export async function collectVisitorData(extraData = {}) {
   const ipDetails = await fetchClientIP();
 
   const now = new Date();
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  const timezone = (typeof Intl !== 'undefined' && Intl.DateTimeFormat().resolvedOptions().timeZone) || 'UTC';
   const timezoneOffsetMinutes = now.getTimezoneOffset();
 
   // Network connection info (if supported by browser)
-  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  const networkInfo = connection ? {
-    effectiveType: connection.effectiveType || null,
-    downlink: connection.downlink || null,
-    rtt: connection.rtt || null,
-    saveData: connection.saveData || false
-  } : null;
+  let networkInfo = null;
+  if (typeof navigator !== 'undefined' && (navigator.connection || navigator.mozConnection || navigator.webkitConnection)) {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    networkInfo = {
+      effectiveType: connection.effectiveType || null,
+      downlink: connection.downlink || null,
+      rtt: connection.rtt || null,
+      saveData: Boolean(connection.saveData)
+    };
+  }
 
-  return {
+  const payload = {
     // 1. Identity & Session
-    visitorId: identity.visitorId,
-    sessionId: identity.sessionId,
-    isNewVisitor: identity.isNewVisitor,
-    visitCount: identity.visitCount,
-    firstVisitAt: identity.firstVisitAt,
+    visitorId: identity.visitorId || generateUniqueId(),
+    sessionId: identity.sessionId || generateUniqueId(),
+    isNewVisitor: Boolean(identity.isNewVisitor),
+    visitCount: identity.visitCount || 1,
+    firstVisitAt: identity.firstVisitAt || now.toISOString(),
 
     // 2. Timestamps
     clientTimestamp: now.toISOString(),
@@ -284,55 +360,57 @@ export async function collectVisitorData(extraData = {}) {
     timezoneOffsetMinutes,
 
     // 3. IP & Geolocation
-    ip: ipDetails.ip,
-    city: ipDetails.city,
-    region: ipDetails.region,
-    country: ipDetails.country,
-    countryCode: ipDetails.countryCode,
-    postal: ipDetails.postal,
-    latitude: ipDetails.latitude,
-    longitude: ipDetails.longitude,
-    ispOrOrg: ipDetails.org,
-    ipLookupSource: ipDetails.source,
+    ip: ipDetails.ip || 'Unknown IP',
+    city: ipDetails.city || null,
+    region: ipDetails.region || null,
+    country: ipDetails.country || null,
+    countryCode: ipDetails.countryCode || null,
+    postal: ipDetails.postal || null,
+    latitude: ipDetails.latitude || null,
+    longitude: ipDetails.longitude || null,
+    ispOrOrg: ipDetails.org || null,
+    ipLookupSource: ipDetails.source || 'unknown',
 
     // 4. Device & Browser
-    deviceType: uaDetails.deviceType,
-    browser: uaDetails.browser,
-    browserName: uaDetails.browserRaw,
-    browserVersion: uaDetails.browserVersion,
-    os: uaDetails.os,
-    platform: navigator.userAgentData?.platform || navigator.platform || 'Unknown',
-    userAgent: navigator.userAgent,
-    touchSupport: (navigator.maxTouchPoints || 0) > 0,
-    maxTouchPoints: navigator.maxTouchPoints || 0,
-    hardwareConcurrency: navigator.hardwareConcurrency || null,
-    deviceMemoryGB: navigator.deviceMemory || null,
+    deviceType: uaDetails.deviceType || 'Desktop',
+    browser: uaDetails.browser || 'Unknown Browser',
+    browserName: uaDetails.browserRaw || 'Unknown',
+    browserVersion: uaDetails.browserVersion || null,
+    os: uaDetails.os || 'Unknown OS',
+    platform: (typeof navigator !== 'undefined' && (navigator.userAgentData?.platform || navigator.platform)) || 'Unknown',
+    userAgent: (typeof navigator !== 'undefined' && navigator.userAgent) || '',
+    touchSupport: typeof navigator !== 'undefined' && (navigator.maxTouchPoints || 0) > 0,
+    maxTouchPoints: (typeof navigator !== 'undefined' && navigator.maxTouchPoints) || 0,
+    hardwareConcurrency: (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || null,
+    deviceMemoryGB: (typeof navigator !== 'undefined' && navigator.deviceMemory) || null,
 
     // 5. Screen & Viewport Specs
-    screenResolution: `${window.screen.width}x${window.screen.height}`,
-    screenWidth: window.screen.width,
-    screenHeight: window.screen.height,
-    viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-    viewportWidth: window.innerWidth,
-    viewportHeight: window.innerHeight,
-    colorDepth: window.screen.colorDepth || 24,
-    pixelRatio: window.devicePixelRatio || 1,
-    orientation: window.screen.orientation ? window.screen.orientation.type : (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'),
+    screenResolution: typeof window !== 'undefined' ? `${window.screen.width}x${window.screen.height}` : '1920x1080',
+    screenWidth: typeof window !== 'undefined' ? window.screen.width : 1920,
+    screenHeight: typeof window !== 'undefined' ? window.screen.height : 1080,
+    viewportSize: typeof window !== 'undefined' ? `${window.innerWidth}x${window.innerHeight}` : '1920x1080',
+    viewportWidth: typeof window !== 'undefined' ? window.innerWidth : 1920,
+    viewportHeight: typeof window !== 'undefined' ? window.innerHeight : 1080,
+    colorDepth: typeof window !== 'undefined' ? (window.screen.colorDepth || 24) : 24,
+    pixelRatio: typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1,
+    orientation: typeof window !== 'undefined' && window.screen.orientation ? window.screen.orientation.type : 'landscape-primary',
 
     // 6. Page & Navigation Details
-    pageUrl: window.location.href,
-    pathname: window.location.pathname,
-    searchParams: window.location.search,
-    hash: window.location.hash,
-    pageTitle: document.title,
-    referrer: document.referrer ? document.referrer : 'Direct / Bookmark',
-    language: navigator.language || navigator.userLanguage || 'en',
-    preferredLanguages: Array.isArray(navigator.languages) ? [...navigator.languages] : [navigator.language],
+    pageUrl: typeof window !== 'undefined' ? window.location.href : '/',
+    pathname: typeof window !== 'undefined' ? window.location.pathname : '/',
+    searchParams: typeof window !== 'undefined' ? window.location.search : '',
+    hash: typeof window !== 'undefined' ? window.location.hash : '',
+    pageTitle: typeof document !== 'undefined' ? document.title : 'IdeaHub',
+    referrer: typeof document !== 'undefined' && document.referrer ? document.referrer : 'Direct / Bookmark',
+    language: (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en',
+    preferredLanguages: typeof navigator !== 'undefined' && Array.isArray(navigator.languages) ? [...navigator.languages] : ['en'],
 
     // 7. Network Quality
     network: networkInfo,
 
-    // 8. Custom Extra Data (e.g. actions, tags, UTM campaign params)
+    // 8. Custom Extra Data
     ...extraData
   };
+
+  return sanitizeForFirestore(payload);
 }
